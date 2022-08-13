@@ -1,9 +1,20 @@
 import axios from 'axios';
 import BaseResult from '../model/base-result.model.js';
 import { apiUrl } from '../utils/apiUrl.js';
+import getNumberRepetedCharacters from '../utils/get-number-repered-characters.js';
 import { timeFormat } from '../utils/time-format.js';
 
 class RickAndMortyService {
+
+
+    async challengefullResponse() {
+        const fullResponse = await  Promise.all([
+            this.chartCounter(),
+            this.episodeLocations()
+        ])
+
+        return fullResponse;
+    }
 
     async chartCounter() {
 
@@ -16,19 +27,19 @@ class RickAndMortyService {
         ]);
 
 
-        const numberRepetedLocations = this.getNumberRepetedCharacters(locations, 'L');
-        const numberRepetedEpisodes = this.getNumberRepetedCharacters(episodes, 'e');
-        const numberRepetedCharacters = this.getNumberRepetedCharacters(characters, 'C');
+        const numberRepetedLocations = getNumberRepetedCharacters(locations, 'L');
+        const numberRepetedEpisodes = getNumberRepetedCharacters(episodes, 'e');
+        const numberRepetedCharacters = getNumberRepetedCharacters(characters, 'C');
 
         const finalTime = Date.now() - initialTime;
-        const format =  timeFormat(finalTime);
+        const format = timeFormat(finalTime);
 
         return new BaseResult(
             {
                 exercice_name: 'chartCounter',
                 time: format[0],
                 in_time: format[1] < 3.000,
-                result: [
+                results: [
                     {
                         char: "l",
                         count: numberRepetedLocations,
@@ -49,38 +60,68 @@ class RickAndMortyService {
         )
 
     }
-    
 
-    async getAllDataFromEndpoint(resource, filter, char) {
+    async episodeLocations() {
+        const initialTime = Date.now();
+
+        const [characters, episodes] = await Promise.all([
+            this.getAllDataFromEndpoint("character"),
+            this.getAllDataFromEndpoint("episode")
+        ])
+
+
+        let results = [];
+        for (const item of episodes) {
+
+            let episode = {
+                name: item.name,
+                episode: item.episode,
+            };
+            let locations = [];
+            for (const character of characters) {
+                if (item.characters.includes(character.url)) {
+                    if (!locations.includes(character.origin.name)) {
+                        locations.push(character.origin.name);
+                    }
+                }
+            }
+            episode.locations = locations;
+            results.push(episode);
+        }
+
+        const finalTime = Date.now() - initialTime;
+        const format = timeFormat(finalTime);
+
+        return new BaseResult(
+            {
+                exercice_name: 'Episode locations',
+                time: format[0],
+                in_time: format[1] < 3.000,
+                results
+            }
+        )
+
+    }
+
+    async getAllDataFromEndpoint(resource = "", filter = "", char = "") {
 
         const requests = [];
 
-        const resourceFirstPage = await axios.get(`${apiUrl}${resource}/?${filter}=${char}`);
+        const resourceFirstPage = await axios.get(`${apiUrl}${resource}${filter && "/?"}${filter}${char && "="}${char}`);
         const pages = resourceFirstPage.data.info.pages;
 
         for (let index = 2; index <= pages; index++) {
-            requests.push(axios.get(`${apiUrl}${resource}/?page=${index}&${filter}=${char}`));
+            requests.push(axios.get(`${apiUrl}${resource}/?page=${index}${filter && "&"}${filter}${char && "="}${char}`));
         }
 
         const recourseRemainingPages = await Promise.all(requests);
+
         const recourseRemainingPagesOrginized = recourseRemainingPages.map(item => {
             return item.data.results;
         })
 
         return [...resourceFirstPage.data.results, ...recourseRemainingPagesOrginized.flat()]
 
-    }
-
-    getNumberRepetedCharacters(data, character) {
-
-        let charactersNumber = 0;
-        let newregex = new RegExp("[" + character + "]", "gi")
-
-        for (const item of data) {
-            charactersNumber += item.name?.match(newregex).length;
-        }
-
-        return charactersNumber;
     }
 
 }
