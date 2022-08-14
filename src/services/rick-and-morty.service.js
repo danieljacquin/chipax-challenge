@@ -3,7 +3,7 @@ import BaseResult from '../model/base-result.model.js';
 import { apiUrl } from '../utils/apiUrl.js';
 import getNumberRepetedCharacters from '../utils/get-number-repered-characters.js';
 import { timeFormat } from '../utils/time-format.js';
-
+console.log(process.env.RICK_AND_MORTY_API_URL)
 class RickAndMortyService {
 
 
