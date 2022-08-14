@@ -4,11 +4,11 @@
 
 ## Running the app
 ```bas
-# production mode
-$ npm run start
+# development mode
+$ npm run dev
 ```
 
-Runs the app in the development mode. Open http://localhost:5000/api/chipax-challenge to view it in the browser.
+Runs the app in the development mode. Open http://localhost:5000/api/chipax-challenge to view it on the browser.
 
 ## Response schema
 The response contains the following structure.
