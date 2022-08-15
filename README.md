@@ -6,6 +6,9 @@
 ```bas
 # development mode
 $ npm run dev
+
+# run tests
+$ npm test
 ```
 
 Runs the app in the development mode. Open http://localhost:5000/api/chipax-challenge to view it on the browser.

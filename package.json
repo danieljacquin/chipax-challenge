@@ -2,11 +2,11 @@
   "name": "chipax-challange",
   "version": "1.0.0",
   "description": "chipax challenge",
-  "main": "src/index.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "start": "node  index.js",
+    "dev": "nodemon index.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "author": "daniel jacquin",

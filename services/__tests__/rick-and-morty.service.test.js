@@ -1,4 +1,4 @@
-import rickAndMortyService from "../rick-and-morty.service"
+import rickAndMortyService from "../rick-and-morty.service.js";
 
 test('try if char counter meets performance', async() => {
     const charCounter = await rickAndMortyService.chartCounter();

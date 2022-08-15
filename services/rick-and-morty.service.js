@@ -1,15 +1,11 @@
 import axios from 'axios';
 
 import BaseResult from '../models/base-result.model.js';
+import { apiUrl } from '../utils/api-url.js';
 import getNumberRepetedCharacters from '../utils/get-number-repered-characters.js';
 import { timeFormat } from '../utils/time-format.js';
 
 class RickAndMortyService {
-
-    constructor(){
-        this.apiUrl = process.env.RICK_AND_MORTY_API_URL;
-    }
-
 
     async challengefullResponse() {
         const fullResponse = await  Promise.all([
@@ -111,11 +107,11 @@ class RickAndMortyService {
 
         const requests = [];
 
-        const resourceFirstPage = await axios.get(`${this.apiUrl}${resource}${filter && "/?"}${filter}${char && "="}${char}`);
+        const resourceFirstPage = await axios.get(`${apiUrl}${resource}${filter && "/?"}${filter}${char && "="}${char}`);
         const pages = resourceFirstPage.data.info.pages;
 
         for (let index = 2; index <= pages; index++) {
-            requests.push(axios.get(`${this.apiUrl}${resource}/?page=${index}${filter && "&"}${filter}${char && "="}${char}`));
+            requests.push(axios.get(`${apiUrl}${resource}/?page=${index}${filter && "&"}${filter}${char && "="}${char}`));
         }
 
         const recourseRemainingPages = await Promise.all(requests);
