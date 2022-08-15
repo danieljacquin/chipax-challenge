@@ -1,8 +1,7 @@
+import {} from 'dotenv/config';
 import express from 'express';
-import dotenv from 'dotenv';
-dotenv.config();
-import apiRouter from './routes/apiRouter.js';
 
+import apiRouter from './routes/apiRouter.js';
 const app = express();
 const port = 5000;
 
